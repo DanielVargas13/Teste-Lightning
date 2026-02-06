@@ -1,0 +1,39 @@
+<div class="container">
+  <h1>Colaboradores</h1>
+  
+  <div *ngIf="erro" class="error-message">{{ erro }}</div>
+  
+  <div *ngIf="carregando" class="loading">Carregando...</div>
+  
+  <a routerLink="/colaboradores/novo" class="btn btn-primary">Novo Colaborador</a>
+  
+  <table class="table" *ngIf="!carregando && colaboradores.length > 0">
+    <thead>
+      <tr>
+        <th>Nome</th>
+        <th>Sobrenome</th>
+        <th>Celular</th>
+        <th>Endereço</th>
+        <th>Status</th>
+        <th>Ações</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let colaborador of colaboradores">
+        <td>{{ colaborador.nome }}</td>
+        <td>{{ colaborador.sobrenome }}</td>
+        <td>{{ colaborador.celular }}</td>
+        <td>{{ colaborador.endereco }}</td>
+        <td>{{ colaborador.ativo ? 'Ativo' : 'Inativo' }}</td>
+        <td>
+          <a [routerLink]="['/colaboradores', colaborador.id]" class="btn btn-sm btn-info">Editar</a>
+          <button (click)="deletar(colaborador.id)" class="btn btn-sm btn-danger">Deletar</button>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+  
+  <div *ngIf="!carregando && colaboradores.length === 0" class="empty-message">
+    Nenhum colaborador encontrado. <a routerLink="/colaboradores/novo">Crie um novo</a>
+  </div>
+</div>
