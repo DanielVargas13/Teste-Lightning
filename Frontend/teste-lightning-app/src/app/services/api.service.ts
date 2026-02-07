@@ -83,6 +83,10 @@ export class ApiService {
   }
 
   // ========== HISTÓRICOS ==========
+  listarTodosHistoricos(): Observable<Historico[]> {
+    return this.http.get<Historico[]>(`${this.apiUrl}/historico`);
+  }
+
   listarHistoricosDaTarefa(tarefaId: number): Observable<Historico[]> {
     return this.http.get<Historico[]>(`${this.apiUrl}/historico/tarefa/${tarefaId}`);
   }

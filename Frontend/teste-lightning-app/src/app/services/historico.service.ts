@@ -21,7 +21,7 @@ export class HistoricoService {
     try {
       // Tentar carregar do backend primeiro com timeout rápido (5s)
       const historicosBackend = await this.apiService.getWithTimeout(
-        this.apiService.listarHistoricosDaTarefa(0)
+        this.apiService.listarTodosHistoricos()
       );
       if (historicosBackend && Array.isArray(historicosBackend)) {
         // Se conseguir do backend, atualizar IndexedDB

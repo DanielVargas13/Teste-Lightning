@@ -14,6 +14,26 @@ public class HistoricoService : IHistoricoService
         _context = context;
     }
 
+    public async Task<List<HistoricoDTO>> ListarTodosHistoricosAsync()
+    {
+        return await _context.Historicos
+            .Include(h => h.Tarefa)
+            .ThenInclude(t => t.Colaborador)
+            .Select(h => new HistoricoDTO
+            {
+                Id = h.Id,
+                TarefaId = h.TarefaId,
+                ColaboradorId = h.Tarefa!.ColaboradorId,
+                DescricaoTarefa = h.Tarefa!.Descricao,
+                NomeColaborador = h.Tarefa!.Colaborador!.Nome + " " + h.Tarefa.Colaborador.Sobrenome,
+                DataExecucao = h.DataExecucao,
+                HoraExecucao = h.HoraExecucao,
+                DataCriacao = h.DataCriacao
+            })
+            .OrderByDescending(h => h.DataExecucao)
+            .ToListAsync();
+    }
+
     public async Task<List<HistoricoDTO>> ListarHistoricosDaTarefaAsync(int tarefaId)
     {
         return await _context.Historicos

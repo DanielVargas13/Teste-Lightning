@@ -15,6 +15,20 @@ public class HistoricoController : ControllerBase
         _historicoService = historicoService;
     }
 
+    [HttpGet]
+    public async Task<ActionResult<List<HistoricoDTO>>> ListarTodos()
+    {
+        try
+        {
+            var resultado = await _historicoService.ListarTodosHistoricosAsync();
+            return Ok(resultado);
+        }
+        catch (Exception ex)
+        {
+            return BadRequest(new { mensagem = ex.Message });
+        }
+    }
+
     [HttpGet("tarefa/{tarefaId}")]
     public async Task<ActionResult<List<HistoricoDTO>>> ListarPorTarefa(int tarefaId)
     {
