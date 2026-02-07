@@ -41,7 +41,7 @@ export class SincronizacaoService {
   private ultimaSincronizacaoTarefas$ = new BehaviorSubject<Date | null>(null);
   private ultimaSincronizacaoHistoricos$ = new BehaviorSubject<Date | null>(null);
 
-  private intervaloPooling = 30000; // 30 segundos
+  private intervaloPooling = 10000; // 10 segundos - reduzido para atualizar dados mais rapidamente
   private tentativasMaximas = 3;
 
   constructor(
@@ -58,10 +58,10 @@ export class SincronizacaoService {
     // Carregar metadados de sincronização anteriores
     this.carregarMetadadosSincronizacao();
     
-    // Sincronizar imediatamente ao iniciar
+    // Sincronizar imediatamente ao iniciar (solução PRIORIDADE 1)
     this.sincronizar();
     
-    // Sincronizar a cada 30 segundos
+    // Sincronizar a cada 10 segundos (reduzido de 30s para melhor responsividade)
     interval(this.intervaloPooling).subscribe(() => {
       this.sincronizar();
     });

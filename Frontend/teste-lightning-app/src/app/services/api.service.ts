@@ -10,13 +10,13 @@ import { Historico } from '../models/historico.model';
 })
 export class ApiService {
   private apiUrl = 'http://localhost:5157/api';
-  private readonly TIMEOUT_MS = 5000; // 5 segundos - timeout rápido para detectar offline
+  private readonly TIMEOUT_MS = 10000; // 10 segundos - timeout maior para respostas mais lentas em desenvolvimento
 
   constructor(private http: HttpClient) { }
 
   /**
-   * Converte Observable para Promise com timeout rápido
-   * Se não responder em 5s, falha rápido (não espera os 10+ segundos padrão)
+   * Converte Observable para Promise com timeout
+   * Se não responder em 10s, falha rápido (não espera indefinidamente)
    */
   private async toPromiseWithTimeout<T>(obs: Observable<T>): Promise<T | undefined> {
     return obs.pipe(
@@ -25,8 +25,9 @@ export class ApiService {
   }
 
   /**
-   * Método público para fazer requisição com timeout rápido
-   * Usado pelos serviços para falhar rápido quando offline
+   * Método público para fazer requisição com timeout
+   * Usado pelos serviços para falhar rapidamente quando offline
+   * Timeout: 10 segundos
    */
   async getWithTimeout<T>(observable: Observable<T>): Promise<T | undefined> {
     return this.toPromiseWithTimeout(observable);
