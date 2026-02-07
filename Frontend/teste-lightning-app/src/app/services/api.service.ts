@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { Observable } from 'rxjs';
+import { Observable, timeout } from 'rxjs';
 import { Colaborador } from '../models/colaborador.model';
 import { Tarefa } from '../models/tarefa.model';
 import { Historico } from '../models/historico.model';
@@ -9,9 +9,28 @@ import { Historico } from '../models/historico.model';
   providedIn: 'root'
 })
 export class ApiService {
-  private apiUrl = 'http://localhost:5000/api';
+  private apiUrl = 'http://localhost:5157/api';
+  private readonly TIMEOUT_MS = 5000; // 5 segundos - timeout rápido para detectar offline
 
   constructor(private http: HttpClient) { }
+
+  /**
+   * Converte Observable para Promise com timeout rápido
+   * Se não responder em 5s, falha rápido (não espera os 10+ segundos padrão)
+   */
+  private async toPromiseWithTimeout<T>(obs: Observable<T>): Promise<T | undefined> {
+    return obs.pipe(
+      timeout(this.TIMEOUT_MS)
+    ).toPromise();
+  }
+
+  /**
+   * Método público para fazer requisição com timeout rápido
+   * Usado pelos serviços para falhar rápido quando offline
+   */
+  async getWithTimeout<T>(observable: Observable<T>): Promise<T | undefined> {
+    return this.toPromiseWithTimeout(observable);
+  }
 
   // ========== COLABORADORES ==========
   criarColaborador(colaborador: Colaborador): Observable<Colaborador> {

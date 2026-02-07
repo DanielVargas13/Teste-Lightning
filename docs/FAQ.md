@@ -1,69 +1,54 @@
-# ❓ FAQ
+# ❓ Perguntas Frequentes
 
-## 🚀 Começar
+## Iniciar o Sistema
 
 **P: Por onde começo?**  
-R: Siga [docs/SETUP.md](SETUP.md).
+R: Siga [QUICK_START.md](QUICK_START.md)
 
 **P: Preciso de SQL Server pago?**  
-R: Não, SQL Server Express é gratuito.
+R: Não, SQL Server Express é gratuito
 
 **P: Quais são os pré-requisitos?**  
-R: Node.js, npm, .NET SDK 6.0+, Angular CLI 21+, SQL Server Express
+R: Node.js v18+, .NET 8+, SQL Server
 
 ---
 
-## 🚀 Problemas
+## Problemas Comuns
 
 **P: Backend não inicia?**  
 R: Verifique se SQL Server está rodando:
-```powershell
-Start-Service MSSQLSERVER
+```bash
+# Windows
+sqlcmd -S . # testa conexão
 ```
 
-**P: Erro "Cannot connect to api"?**  
-R: Certifique-se que o backend está rodando:
-```powershell
-cd Backend && dotnet run
-```
+**P: "Cannot connect to api"?**  
+R: Certifique-se backend está em http://localhost:5157 e está rodando
 
 **P: Frontend não abre (localhost:4200)?**  
-R: Verifique se ng serve está rodando:
-```powershell
-cd Frontend/teste-lightning-app && ng serve
-```
+R: Verifique se `npm start` está rodando no diretório Frontend
 
 ---
 
-## 💾 Banco de Dados
+## Sincronização Offline
 
-**P: Qual banco de dados é usado?**  
-R: TesteLightningDB com 3 tabelas:
-- Colaboradores
-- Tarefas
-- Historicos
+**P: Como funciona?**  
+R: Dados salvam localmente no navegador (IndexedDB). A cada 30 segundos, sincronizam com o servidor automaticamente.
 
-**P: Como resetar o banco?**  
-R: ⚠️ Isso apaga todos os dados:
-```powershell
+**P: E se perder conexão?**  
+R: Continua funcionando offline. Quando voltar a conexão, sincroniza automaticamente.
+
+---
+
+## Banco de Dados
+
+**P: Como resetar tudo?**  
+R: Delete o banco:
+```bash
 sqlcmd -S . -Q "DROP DATABASE TesteLightningDB"
 ```
 
-Depois recrie seguindo [docs/SETUP.md](SETUP.md).
+Depois rode o backend novamente para recriar.
 
----
-
-## 🔄 Offline
-
-**P: Como funciona a sincronização offline?**  
-R: 
-- Dados salvam imediatamente no IndexedDB (navegador)
-- A cada 30s, sync automático envia para o servidor
-- Se falhar, tenta novamente automaticamente
-
----
-
-## 📁 Estrutura
-
-**Backend:** `Backend/` com Models, Services, Controllers, Data  
-**Frontend:** `Frontend/teste-lightning-app/src/` com services, components, models
+**P: Qual banco é usado?**  
+R: TesteLightningDB com 3 tabelas: Colaboradores, Tarefas, Históricos

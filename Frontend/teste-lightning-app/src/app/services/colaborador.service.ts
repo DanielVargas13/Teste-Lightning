@@ -71,8 +71,30 @@ export class ColaboradorService {
   }
 
   async carregarColaboradores(): Promise<void> {
-    const colaboradores = await this.indexedDBService.listarColaboradores();
-    this.colaboradores$.next(colaboradores);
+    try {
+      // Tentar carregar do backend primeiro com timeout rápido (5s)
+      const colaboradoresBackend = await this.apiService.getWithTimeout(
+        this.apiService.listarColaboradores()
+      );
+      if (colaboradoresBackend && Array.isArray(colaboradoresBackend)) {
+        // Se conseguir do backend, atualizar IndexedDB
+        for (const colaborador of colaboradoresBackend) {
+          await this.indexedDBService.salvarColaborador(colaborador);
+        }
+        this.colaboradores$.next(colaboradoresBackend);
+        console.log('✅ Colaboradores carregados do backend');
+        return;
+      }
+    } catch (erro) {
+      console.warn('⚠️ Backend offline/lento. Carregando colaboradores do armazenamento local...', erro);
+    }
+    
+    // Fallback: carregar do IndexedDB (modo offline) - IMEDIATO
+    const colaboradoresLocal = await this.indexedDBService.listarColaboradores();
+    this.colaboradores$.next(colaboradoresLocal);
+    if (colaboradoresLocal.length > 0) {
+      console.log(`📱 ${colaboradoresLocal.length} colaboradores carregados do armazenamento local (offline)`);
+    }
   }
 
   getColaboradores$(): Observable<Colaborador[]> {

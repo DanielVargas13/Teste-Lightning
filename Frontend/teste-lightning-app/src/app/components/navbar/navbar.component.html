@@ -1,0 +1,107 @@
+<nav class="bg-blue-600 text-white shadow-lg">
+  <div class="max-w-7xl mx-auto px-4">
+    <div class="flex justify-between items-center h-16">
+      <!-- Logo -->
+      <div class="flex-shrink-0">
+        <a routerLink="/" class="text-2xl font-bold" (click)="closeMenu()">
+          ⚡ Lightning
+        </a>
+      </div>
+
+      <!-- Desktop Navigation -->
+      <div class="hidden md:flex space-x-8">
+        <a
+          routerLink="/"
+          routerLinkActive="border-b-2 border-white"
+          [routerLinkActiveOptions]="{ exact: true }"
+          class="px-3 py-2 rounded-md text-sm font-medium hover:bg-blue-700 transition"
+        >
+          Home
+        </a>
+        <a
+          routerLink="/colaboradores"
+          routerLinkActive="border-b-2 border-white"
+          class="px-3 py-2 rounded-md text-sm font-medium hover:bg-blue-700 transition"
+        >
+          Colaboradores
+        </a>
+        <a
+          routerLink="/tarefas"
+          routerLinkActive="border-b-2 border-white"
+          class="px-3 py-2 rounded-md text-sm font-medium hover:bg-blue-700 transition"
+        >
+          Tarefas
+        </a>
+        <a
+          routerLink="/historico"
+          routerLinkActive="border-b-2 border-white"
+          class="px-3 py-2 rounded-md text-sm font-medium hover:bg-blue-700 transition"
+        >
+          Histórico
+        </a>
+      </div>
+
+      <!-- Mobile menu button -->
+      <div class="md:hidden">
+        <button
+          (click)="toggleMenu()"
+          class="text-white focus:outline-none"
+        >
+          <svg
+            class="h-6 w-6"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="M4 6h16M4 12h16M4 18h16"
+            />
+          </svg>
+        </button>
+      </div>
+    </div>
+
+    <!-- Mobile Navigation -->
+    <div
+      *ngIf="menuOpen"
+      class="md:hidden pb-4 space-y-2"
+    >
+      <a
+        routerLink="/"
+        class="block px-3 py-2 rounded-md text-base font-medium hover:bg-blue-700 transition"
+        (click)="closeMenu()"
+      >
+        Home
+      </a>
+      <a
+        routerLink="/colaboradores"
+        class="block px-3 py-2 rounded-md text-base font-medium hover:bg-blue-700 transition"
+        (click)="closeMenu()"
+      >
+        Colaboradores
+      </a>
+      <a
+        routerLink="/tarefas"
+        class="block px-3 py-2 rounded-md text-base font-medium hover:bg-blue-700 transition"
+        (click)="closeMenu()"
+      >
+        Tarefas
+      </a>
+      <a
+        routerLink="/historico"
+        class="block px-3 py-2 rounded-md text-base font-medium hover:bg-blue-700 transition"
+        (click)="closeMenu()"
+      >
+        Histórico
+      </a>
+    </div>
+
+    <!-- Status de Sincronização -->
+    <div class="py-3 border-t border-blue-500">
+      <app-status-sincronizacao></app-status-sincronizacao>
+    </div>
+  </div>
+</nav>

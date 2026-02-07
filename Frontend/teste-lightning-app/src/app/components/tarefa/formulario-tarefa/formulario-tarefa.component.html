@@ -1,0 +1,108 @@
+<div class="bg-white rounded-lg shadow p-6 mb-8">
+  <h2 class="text-2xl font-bold text-gray-900 mb-6">
+    {{ modo === 'criar' ? '+' : '✏️' }} {{ modo === 'criar' ? 'Nova' : 'Editar' }} Tarefa
+  </h2>
+
+  <div *ngIf="erro" class="p-4 bg-red-100 border border-red-400 text-red-700 rounded mb-6">
+    {{ erro }}
+  </div>
+
+  <form (ngSubmit)="salvarTarefa()" class="space-y-6">
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+      <!-- Descrição -->
+      <div class="col-span-1 md:col-span-2">
+        <label class="block text-sm font-medium text-gray-900 mb-2">
+          Descrição *
+        </label>
+        <textarea
+          [(ngModel)]="formulario.descricao"
+          name="descricao"
+          class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+          placeholder="Digite a descrição da tarefa"
+          rows="3"
+        ></textarea>
+      </div>
+
+      <!-- Colaborador -->
+      <div>
+        <label class="block text-sm font-medium text-gray-900 mb-2">
+          Colaborador *
+        </label>
+        <select
+          [(ngModel)]="formulario.colaboradorId"
+          name="colaboradorId"
+          class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+        >
+          <option value="">Selecione um colaborador</option>
+          <option
+            *ngFor="let colaborador of colaboradores$ | async"
+            [value]="colaborador.id"
+          >
+            {{ colaborador.nome }} {{ colaborador.sobrenome }}
+          </option>
+        </select>
+      </div>
+
+      <!-- Periodicidade -->
+      <div>
+        <label class="block text-sm font-medium text-gray-900 mb-2">
+          Periodicidade (dias) *
+        </label>
+        <input
+          [(ngModel)]="formulario.periodicidadeDias"
+          name="periodicidadeDias"
+          type="number"
+          min="1"
+          class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+          placeholder="Digite a periodicidade em dias"
+        />
+      </div>
+
+      <!-- Data Agendada -->
+      <div>
+        <label class="block text-sm font-medium text-gray-900 mb-2">
+          Data Agendada *
+        </label>
+        <input
+          [(ngModel)]="formulario.dataAgendada"
+          name="dataAgendada"
+          type="date"
+          class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+        />
+      </div>
+
+      <!-- Status -->
+      <div>
+        <label class="block text-sm font-medium text-gray-900 mb-2">
+          Status
+        </label>
+        <select
+          [(ngModel)]="formulario.ativo"
+          name="ativo"
+          class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+        >
+          <option [value]="true">Ativa</option>
+          <option [value]="false">Inativa</option>
+        </select>
+      </div>
+    </div>
+
+    <!-- Botões -->
+    <div class="flex gap-4 justify-end">
+      <button
+        type="button"
+        (click)="cancelar()"
+        class="px-6 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition"
+      >
+        Cancelar
+      </button>
+      <button
+        type="submit"
+        [disabled]="carregando"
+        class="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition disabled:opacity-50"
+      >
+        {{ carregando ? 'Salvando...' : 'Salvar' }}
+      </button>
+    </div>
+  </form>
+</div>

@@ -104,8 +104,30 @@ export class TarefaService {
   }
 
   async carregarTarefas(): Promise<void> {
-    const tarefas = await this.indexedDBService.listarTarefas();
-    this.tarefas$.next(tarefas);
+    try {
+      // Tentar carregar do backend primeiro com timeout rápido (5s)
+      const tarefasBackend = await this.apiService.getWithTimeout(
+        this.apiService.listarTarefas()
+      );
+      if (tarefasBackend && Array.isArray(tarefasBackend)) {
+        // Se conseguir do backend, atualizar IndexedDB
+        for (const tarefa of tarefasBackend) {
+          await this.indexedDBService.salvarTarefa(tarefa);
+        }
+        this.tarefas$.next(tarefasBackend);
+        console.log('✅ Tarefas carregadas do backend');
+        return;
+      }
+    } catch (erro) {
+      console.warn('⚠️ Backend offline/lento. Carregando tarefas do armazenamento local...', erro);
+    }
+    
+    // Fallback: carregar do IndexedDB (modo offline) - IMEDIATO
+    const tarefasLocal = await this.indexedDBService.listarTarefas();
+    this.tarefas$.next(tarefasLocal);
+    if (tarefasLocal.length > 0) {
+      console.log(`📱 ${tarefasLocal.length} tarefas carregadas do armazenamento local (offline)`);
+    }
   }
 
   getTarefas$(): Observable<Tarefa[]> {

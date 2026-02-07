@@ -9,14 +9,16 @@ export class AppDB extends Dexie {
   tarefas!: Table<Tarefa, number>;
   historicos!: Table<Historico, number>;
   sincronizacaoQueue!: Table<any, number>;
+  sincronizacaoMetadata!: Table<any, string>;
 
   constructor() {
     super('AppDatabase');
-    this.version(1).stores({
+    this.version(2).stores({
       colaboradores: '++id',
       tarefas: '++id, colaboradorId',
       historicos: '++id, tarefaId, colaboradorId, dataExecucao',
-      sincronizacaoQueue: '++id, sincronizado'
+      sincronizacaoQueue: '++id, sincronizado',
+      sincronizacaoMetadata: '&tipo'
     });
   }
 }
@@ -79,13 +81,18 @@ export class IndexedDBService {
     return await db.historicos.where('colaboradorId').equals(colaboradorId).toArray();
   }
 
+  async listarHistoricos(): Promise<Historico[]> {
+    return await db.historicos.toArray();
+  }
+
   // ========== FILA DE SINCRONIZAÇÃO ==========
   async adicionarNaFila(operacao: any): Promise<number> {
     return await db.sincronizacaoQueue.put(operacao);
   }
 
   async obterFilaNonSincronizada(): Promise<any[]> {
-    return await db.sincronizacaoQueue.where('sincronizado').equals(false as any).toArray();
+    const todas = await db.sincronizacaoQueue.toArray();
+    return todas.filter(op => op.sincronizado !== true);
   }
 
   async marcarComoSincronizado(id: number): Promise<void> {
@@ -93,6 +100,33 @@ export class IndexedDBService {
   }
 
   async limparFilaSincronizada(): Promise<void> {
-    await db.sincronizacaoQueue.where('sincronizado').equals(true as any).delete();
+    const todas = await db.sincronizacaoQueue.toArray();
+    const idsParaDeletar = todas.filter(op => op.sincronizado === true).map(op => op.id);
+    await db.sincronizacaoQueue.bulkDelete(idsParaDeletar);
+  }
+
+  // ========== METADADOS DE SINCRONIZAÇÃO ==========
+  async obterUltimaSincronizacao(tipo: string): Promise<Date | null> {
+    const metadata = await db.sincronizacaoMetadata.get(tipo);
+    return metadata?.ultimaSincronizacao ? new Date(metadata.ultimaSincronizacao) : null;
+  }
+
+  async atualizarUltimaSincronizacao(tipo: string): Promise<void> {
+    await db.sincronizacaoMetadata.put({
+      tipo,
+      ultimaSincronizacao: new Date().toISOString()
+    });
+  }
+
+  async obterMetadados(tipo: string): Promise<any> {
+    return await db.sincronizacaoMetadata.get(tipo);
+  }
+
+  async salvarMetadados(tipo: string, metadata: any): Promise<void> {
+    await db.sincronizacaoMetadata.put({
+      tipo,
+      ...metadata,
+      ultimaSincronizacao: new Date().toISOString()
+    });
   }
 }
