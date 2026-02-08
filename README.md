@@ -1,71 +1,41 @@
-# ⚡ Teste Lightning - Sistema de Gerenciamento de Tarefas
+# ⚡ Teste Lightning
 
-Sistema completo de gerenciamento de tarefas e colaboradores com sincronização offline e polling automático.
+Sistema de gerenciamento de tarefas e colaboradores com sincronização offline.
 
-## 🚀 Início Rápido
+## Início Rápido
 
-### Executar
-
-**Windows:**
+### Executar em 3 passos:
 ```bash
+# 1. Backend
 cd Backend && dotnet run
-# Em outro terminal:
+
+# 2. Frontend (novo terminal)
 cd Frontend/teste-lightning-app && npm start
+
+# 3. Abrir
+http://localhost:4200
 ```
 
-**Linux/macOS:**
-```bash
-cd Backend && dotnet run
-# Em outro terminal:
-cd Frontend/teste-lightning-app && ng serve
-```
+**API Docs:** http://localhost:5157/swagger
 
-### Acessar
-- **Frontend:** http://localhost:4200
-- **API Swagger:** http://localhost:5157/swagger
+## Recursos Principais
 
-## 🎯 Recursos
+- Angular 21 + Tailwind CSS + RxJS
+- .NET 8 + Entity Framework Core + SQL Server
+- Sincronização offline com IndexedDB
+- Polling automático (30 segundos)
+- CRUD para Colaboradores, Tarefas, Histórico
+- Responsivo (Mobile/Desktop)
 
-- ✅ Angular 21 + Tailwind CSS
-- ✅ .NET 8 + Entity Framework Core + SQL Server
-- ✅ Sincronização offline com IndexedDB
-- ✅ Polling automático a cada 30 segundos
-- ✅ CRUD completo (Colaboradores, Tarefas, Histórico)
-- ✅ Responsivo (Mobile/Desktop)
-
-## 📁 Estrutura
-
-```
-Backend/              # API .NET 8
-├── Controllers/      # Endpoints
-├── Services/         # Lógica de negócio
-├── Models/          # Entidades
-└── Data/            # DbContext
-
-Frontend/             # Angular 21
-├── src/app/
-│   ├── pages/       # Páginas principais
-│   ├── services/    # HTTP + Sincronização
-│   ├── components/  # Componentes reutilizáveis
-│   └── models/      # Interfaces
-```
-
-## 🔧 Configuração (Primeira Vez)
-
-1. **SQL Server Connection String** - Editar `Backend/appsettings.json`
-2. **Criar banco de dados** - Executar migrations
-3. **Instalar dependências** - `npm install` (Frontend) e restaurar packages (Backend)
-
-Consulte [docs/SETUP.md](docs/SETUP.md) para detalhes.
-
-## 📚 Documentação
+## Documentação
 
 | Documento | Descrição |
 |-----------|-----------|
-| [docs/QUICK_START.md](docs/QUICK_START.md) | Como iniciar em 2 minutos |
+| [docs/QUICK_START.md](docs/QUICK_START.md) | Primeiros passos |
 | [docs/SETUP.md](docs/SETUP.md) | Configuração inicial |
-| [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) | Arquitetura e fluxo de sincronização |
-| [docs/FAQ.md](docs/FAQ.md) | Perguntas frequentes |
+| [docs/SCRIPTS_SQL.md](docs/SCRIPTS_SQL.md) | Scripts para criar tabelas |
+| [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) | Arquitetura técnica |
+| [docs/FAQ.md](docs/FAQ.md) | Troubleshooting |
 
 ---
 

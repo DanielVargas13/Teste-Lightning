@@ -17,12 +17,21 @@ Edite `Backend/appsettings.json` com sua connection string do SQL Server:
 }
 ```
 
-**Opções de strings:**
+**Opções de connection string:**
 - `(local)\\SQLEXPRESS` - SQL Server Express
 - `(localdb)\\mssqllocaldb` - LocalDB
 - `localhost` - SQL Server padrão
 
-As tabelas serão criadas automaticamente nas próximas etapas.
+### Criar Tabelas
+
+Se preferir criar as tabelas manualmente:
+
+1. Abra SQL Server Management Studio (SSMS) ou sqlcmd
+2. Abra arquivo: `Backend/Scripts/create-tables.sql`
+3. Clique em "Execute" (ou Ctrl+E)
+4. Verifique que as 3 tabelas foram criadas
+
+Consulte [docs/SCRIPTS_SQL.md](SCRIPTS_SQL.md) para mais detalhes.
 
 ## 🔧 Passo 2: Backend
 
@@ -32,7 +41,7 @@ dotnet restore
 dotnet run
 ```
 
-Banco será criado automaticamente. Acesse: http://localhost:5157/swagger
+Acesse: http://localhost:5157/swagger
 
 ## 📱 Passo 3: Frontend
 
