@@ -68,35 +68,15 @@ export class TarefaService {
     const tarefa = await this.indexedDBService.obterTarefa(id);
     if (!tarefa) return;
 
-    // 2. Atualizar data próxima (reprogramação automática)
-    const novaDataProxima = new Date(tarefa.dataAgendada);
-    novaDataProxima.setDate(novaDataProxima.getDate() + tarefa.periodicidadeDias);
-    
-    tarefa.dataProxima = novaDataProxima;
-    tarefa.dataAgendada = novaDataProxima;
-
     // 3. Salvar tarefa reprogramada
     await this.indexedDBService.salvarTarefa(tarefa);
-
-    // 4. Registrar no histórico
-    const historico: any = {
-      tarefaId: id,
-      colaboradorId: tarefa.colaboradorId,
-      descricaoTarefa: tarefa.descricao,
-      nomeColaborador: '',
-      dataExecucao: new Date(),
-      horaExecucao: new Date().toLocaleTimeString(),
-      dataCriacao: new Date()
-    };
-
-    await this.indexedDBService.salvarHistorico(historico);
 
     // 5. Adicionar à fila de sincronização
     await this.indexedDBService.adicionarNaFila({
       entityType: 'Tarefa',
       entityId: id,
       operacao: 'EXECUTE',
-      dados: JSON.stringify({ tarefa, historico }),
+      dados: JSON.stringify(tarefa),
       sincronizado: false
     });
 

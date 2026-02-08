@@ -12,15 +12,21 @@
       <!-- Descrição -->
       <div class="col-span-1 md:col-span-2">
         <label class="block text-sm font-medium text-gray-900 mb-2">
-          Descrição *
+          Descrição * (5-500 caracteres)
         </label>
         <textarea
           [(ngModel)]="formulario.descricao"
+          (blur)="validarDescricao()"
+          (input)="validarDescricao()"
           name="descricao"
+          [class.border-red-500]="errosCampos['descricao']"
           class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
           placeholder="Digite a descrição da tarefa"
           rows="3"
         ></textarea>
+        <p *ngIf="errosCampos['descricao']" class="mt-1 text-sm text-red-600">
+          {{ errosCampos['descricao'] }}
+        </p>
       </div>
 
       <!-- Colaborador -->
@@ -30,10 +36,12 @@
         </label>
         <select
           [(ngModel)]="formulario.colaboradorId"
+          (blur)="validarColaborador()"
           name="colaboradorId"
+          [class.border-red-500]="errosCampos['colaboradorId']"
           class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
         >
-          <option value="">Selecione um colaborador</option>
+          <option [value]="0">Selecione um colaborador</option>
           <option
             *ngFor="let colaborador of colaboradores$ | async"
             [value]="colaborador.id"
@@ -41,34 +49,50 @@
             {{ colaborador.nome }} {{ colaborador.sobrenome }}
           </option>
         </select>
+        <p *ngIf="errosCampos['colaboradorId']" class="mt-1 text-sm text-red-600">
+          {{ errosCampos['colaboradorId'] }}
+        </p>
       </div>
 
       <!-- Periodicidade -->
       <div>
         <label class="block text-sm font-medium text-gray-900 mb-2">
-          Periodicidade (dias) *
+          Periodicidade (dias) * (1-365)
         </label>
         <input
           [(ngModel)]="formulario.periodicidadeDias"
+          (blur)="validarPeriodicidade()"
+          (input)="validarPeriodicidade()"
           name="periodicidadeDias"
           type="number"
           min="1"
+          max="365"
+          [class.border-red-500]="errosCampos['periodicidadeDias']"
           class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
           placeholder="Digite a periodicidade em dias"
         />
+        <p *ngIf="errosCampos['periodicidadeDias']" class="mt-1 text-sm text-red-600">
+          {{ errosCampos['periodicidadeDias'] }}
+        </p>
       </div>
 
       <!-- Data Agendada -->
       <div>
         <label class="block text-sm font-medium text-gray-900 mb-2">
-          Data Agendada *
+          Data Agendada * (data futura)
         </label>
         <input
           [(ngModel)]="formulario.dataAgendada"
+          (blur)="validarDataAgendada()"
+          (change)="validarDataAgendada()"
           name="dataAgendada"
           type="date"
+          [class.border-red-500]="errosCampos['dataAgendada']"
           class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
         />
+        <p *ngIf="errosCampos['dataAgendada']" class="mt-1 text-sm text-red-600">
+          {{ errosCampos['dataAgendada'] }}
+        </p>
       </div>
 
       <!-- Status -->

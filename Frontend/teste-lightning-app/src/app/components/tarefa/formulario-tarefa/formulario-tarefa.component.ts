@@ -5,6 +5,8 @@ import { TarefaService } from '../../../services/tarefa.service';
 import { ColaboradorService } from '../../../services/colaborador.service';
 import { Tarefa } from '../../../models/tarefa.model';
 import { Colaborador } from '../../../models/colaborador.model';
+import { TarefaSchema, ValidadorCampos } from '../../../validators/validacao.schemas';
+import { ZodError } from 'zod';
 import { Observable } from 'rxjs';
 
 @Component({
@@ -30,6 +32,7 @@ export class FormularioTarefaComponent implements OnInit {
   colaboradores$: Observable<Colaborador[]>;
   carregando = false;
   erro = '';
+  errosCampos: { [key: string]: string } = {};
   modo: 'criar' | 'editar' = 'criar';
 
   constructor(
@@ -52,21 +55,31 @@ export class FormularioTarefaComponent implements OnInit {
   }
 
   async salvarTarefa() {
-    if (!this.validarFormulario()) {
+    // Limpar erros anteriores
+    this.erro = '';
+    this.errosCampos = {};
+
+    // Validar formulário completo com Zod
+    const resultado = TarefaSchema.safeParse(this.formulario);
+    
+    if (!resultado.success) {
+      // Processar erros do Zod
+      resultado.error.issues.forEach((err: any) => {
+        const campo = err.path[0] as string;
+        this.errosCampos[campo] = err.message;
+      });
+      this.erro = 'Por favor, corrija os erros abaixo';
       return;
     }
 
     this.carregando = true;
-    this.erro = '';
 
     try {
       if (this.modo === 'criar') {
-        // Usar apenas o serviço - ele cuida de tudo (IndexedDB + Fila + Sincronização)
-        await this.tarefaService.criarTarefa(this.formulario);
+        await this.tarefaService.criarTarefa(resultado.data);
         this.salvo.emit();
       } else {
-        // Usar apenas o serviço - ele cuida de tudo (IndexedDB + Fila + Sincronização)
-        await this.tarefaService.atualizarTarefa(this.formulario);
+        await this.tarefaService.atualizarTarefa(resultado.data);
         this.salvo.emit();
       }
     } catch (error) {
@@ -77,24 +90,77 @@ export class FormularioTarefaComponent implements OnInit {
     }
   }
 
-  validarFormulario(): boolean {
-    if (!this.formulario.descricao.trim()) {
-      this.erro = 'Descrição é obrigatória';
-      return false;
+  /**
+   * Valida um campo específico em tempo real
+   * Usado para feedback imediato enquanto o usuário digita
+   */
+  validarCampo(campo: string): void {
+    this.errosCampos[campo] = '';
+    const valor = (this.formulario as any)[campo];
+
+    if (valor === undefined || valor === null || valor === '' || valor === 0) {
+      return;
     }
-    if (!this.formulario.colaboradorId) {
-      this.erro = 'Colaborador é obrigatório';
-      return false;
+
+    try {
+      const validador = (ValidadorCampos as any)[campo];
+      if (validador) {
+        validador.parse(valor);
+      }
+    } catch (error) {
+      if (error instanceof ZodError) {
+        this.errosCampos[campo] = (error.issues[0] as any)?.message || 'Campo inválido';
+      }
     }
-    if (!this.formulario.periodicidadeDias || this.formulario.periodicidadeDias <= 0) {
-      this.erro = 'Periodicidade deve ser maior que 0';
-      return false;
+  }
+
+  /**
+   * Valida campo descrição em tempo real
+   */
+  validarDescricao(): void {
+    this.validarCampo('descricao');
+  }
+
+  /**
+   * Valida campo periodicidade em tempo real
+   */
+  validarPeriodicidade(): void {
+    this.validarCampo('periodicidadeDias');
+  }
+
+  /**
+   * Valida campo colaborador (não vazio)
+   */
+  validarColaborador(): void {
+    this.errosCampos['colaboradorId'] = '';
+    if (!this.formulario.colaboradorId || this.formulario.colaboradorId === 0) {
+      this.errosCampos['colaboradorId'] = 'Colaborador é obrigatório';
     }
+  }
+
+  /**
+   * Valida data agendada
+   */
+  validarDataAgendada(): void {
+    this.errosCampos['dataAgendada'] = '';
     if (!this.formulario.dataAgendada) {
-      this.erro = 'Data agendada é obrigatória';
-      return false;
+      this.errosCampos['dataAgendada'] = 'Data agendada é obrigatória';
+      return;
     }
-    return true;
+
+    try {
+      const dataSchema = TarefaSchema.pick({ dataAgendada: true });
+      dataSchema.parse({ dataAgendada: new Date(this.formulario.dataAgendada) });
+    } catch (error) {
+      if (error instanceof ZodError) {
+        this.errosCampos['dataAgendada'] = (error.issues[0] as any)?.message || 'Data inválida';
+      }
+    }
+  }
+
+  validarFormulario(): boolean {
+    const resultado = TarefaSchema.safeParse(this.formulario);
+    return resultado.success;
   }
 
   cancelar() {

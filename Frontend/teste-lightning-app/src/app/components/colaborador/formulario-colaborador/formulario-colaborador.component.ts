@@ -3,6 +3,8 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { ColaboradorService } from '../../../services/colaborador.service';
 import { Colaborador } from '../../../models/colaborador.model';
+import { ColaboradorSchema, ValidadorCampos } from '../../../validators/validacao.schemas';
+import { ZodError } from 'zod';
 
 @Component({
   selector: 'app-formulario-colaborador',
@@ -26,6 +28,7 @@ export class FormularioColaboradorComponent implements OnInit {
 
   carregando = false;
   erro = '';
+  errosCampos: { [key: string]: string } = {};
   modo: 'criar' | 'editar' = 'criar';
 
   constructor(
@@ -40,21 +43,31 @@ export class FormularioColaboradorComponent implements OnInit {
   }
 
   async salvarColaborador() {
-    if (!this.validarFormulario()) {
+    // Limpar erros anteriores
+    this.erro = '';
+    this.errosCampos = {};
+
+    // Validar formulário completo com Zod
+    const resultado = ColaboradorSchema.safeParse(this.formulario);
+    
+    if (!resultado.success) {
+      // Processar erros do Zod
+      resultado.error.issues.forEach((err: any) => {
+        const campo = err.path[0] as string;
+        this.errosCampos[campo] = err.message;
+      });
+      this.erro = 'Por favor, corrija os erros abaixo';
       return;
     }
 
     this.carregando = true;
-    this.erro = '';
 
     try {
       if (this.modo === 'criar') {
-        // Usar apenas o serviço - ele cuida de tudo (IndexedDB + Fila + Sincronização)
-        await this.colaboradorService.criarColaborador(this.formulario);
+        await this.colaboradorService.criarColaborador(resultado.data);
         this.salvo.emit();
       } else {
-        // Usar apenas o serviço - ele cuida de tudo (IndexedDB + Fila + Sincronização)
-        await this.colaboradorService.atualizarColaborador(this.formulario);
+        await this.colaboradorService.atualizarColaborador(resultado.data);
         this.salvo.emit();
       }
     } catch (error) {
@@ -65,24 +78,61 @@ export class FormularioColaboradorComponent implements OnInit {
     }
   }
 
+  /**
+   * Valida um campo específico em tempo real
+   * Usado para feedback imediato enquanto o usuário digita
+   */
+  validarCampo(campo: string): void {
+    this.errosCampos[campo] = '';
+    const valor = (this.formulario as any)[campo];
+
+    if (valor === undefined || valor === null || valor === '') {
+      return;
+    }
+
+    try {
+      const validador = (ValidadorCampos as any)[campo];
+      if (validador) {
+        validador.parse(valor);
+      }
+    } catch (error) {
+      if (error instanceof ZodError) {
+        this.errosCampos[campo] = (error.issues[0] as any)?.message || 'Campo inválido';
+      }
+    }
+  }
+
+  /**
+   * Valida campo nome em tempo real
+   */
+  validarNome(): void {
+    this.validarCampo('nome');
+  }
+
+  /**
+   * Valida campo sobrenome em tempo real
+   */
+  validarSobrenome(): void {
+    this.validarCampo('sobrenome');
+  }
+
+  /**
+   * Valida campo celular em tempo real
+   */
+  validarCelular(): void {
+    this.validarCampo('celular');
+  }
+
+  /**
+   * Valida campo endereço em tempo real
+   */
+  validarEndereco(): void {
+    this.validarCampo('endereco');
+  }
+
   validarFormulario(): boolean {
-    if (!this.formulario.nome.trim()) {
-      this.erro = 'Nome é obrigatório';
-      return false;
-    }
-    if (!this.formulario.sobrenome.trim()) {
-      this.erro = 'Sobrenome é obrigatório';
-      return false;
-    }
-    if (!this.formulario.celular.trim()) {
-      this.erro = 'Celular é obrigatório';
-      return false;
-    }
-    if (!this.formulario.endereco.trim()) {
-      this.erro = 'Endereço é obrigatório';
-      return false;
-    }
-    return true;
+    const resultado = ColaboradorSchema.safeParse(this.formulario);
+    return resultado.success;
   }
 
   cancelar() {
