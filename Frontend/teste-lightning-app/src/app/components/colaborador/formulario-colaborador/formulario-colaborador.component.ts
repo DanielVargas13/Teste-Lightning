@@ -43,15 +43,12 @@ export class FormularioColaboradorComponent implements OnInit {
   }
 
   async salvarColaborador() {
-    // Limpar erros anteriores
     this.erro = '';
     this.errosCampos = {};
 
-    // Validar formulário completo com Zod
     const resultado = ColaboradorSchema.safeParse(this.formulario);
     
     if (!resultado.success) {
-      // Processar erros do Zod
       resultado.error.issues.forEach((err: any) => {
         const campo = err.path[0] as string;
         this.errosCampos[campo] = err.message;
@@ -78,10 +75,6 @@ export class FormularioColaboradorComponent implements OnInit {
     }
   }
 
-  /**
-   * Valida um campo específico em tempo real
-   * Usado para feedback imediato enquanto o usuário digita
-   */
   validarCampo(campo: string): void {
     this.errosCampos[campo] = '';
     const valor = (this.formulario as any)[campo];
@@ -102,30 +95,18 @@ export class FormularioColaboradorComponent implements OnInit {
     }
   }
 
-  /**
-   * Valida campo nome em tempo real
-   */
   validarNome(): void {
     this.validarCampo('nome');
   }
 
-  /**
-   * Valida campo sobrenome em tempo real
-   */
   validarSobrenome(): void {
     this.validarCampo('sobrenome');
   }
 
-  /**
-   * Valida campo celular em tempo real
-   */
   validarCelular(): void {
     this.validarCampo('celular');
   }
 
-  /**
-   * Valida campo endereço em tempo real
-   */
   validarEndereco(): void {
     this.validarCampo('endereco');
   }

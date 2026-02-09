@@ -1,6 +1,6 @@
 <div class="bg-white rounded-lg shadow p-6 mb-8">
   <h2 class="text-2xl font-bold text-gray-900 mb-6">
-    {{ modo === 'criar' ? '+' : '✏️' }} {{ modo === 'criar' ? 'Nova' : 'Editar' }} Tarefa
+    {{ modo === 'criar' ? 'Nova' : 'Editar' }} Tarefa
   </h2>
 
   <div *ngIf="erro" class="p-4 bg-red-100 border border-red-400 text-red-700 rounded mb-6">
@@ -9,7 +9,6 @@
 
   <form (ngSubmit)="salvarTarefa()" class="space-y-6">
     <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-      <!-- Descrição -->
       <div class="col-span-1 md:col-span-2">
         <label class="block text-sm font-medium text-gray-900 mb-2">
           Descrição * (5-500 caracteres)
@@ -29,7 +28,6 @@
         </p>
       </div>
 
-      <!-- Colaborador -->
       <div>
         <label class="block text-sm font-medium text-gray-900 mb-2">
           Colaborador *
@@ -54,7 +52,6 @@
         </p>
       </div>
 
-      <!-- Periodicidade -->
       <div>
         <label class="block text-sm font-medium text-gray-900 mb-2">
           Periodicidade (dias) * (1-365)
@@ -76,7 +73,6 @@
         </p>
       </div>
 
-      <!-- Data Agendada -->
       <div>
         <label class="block text-sm font-medium text-gray-900 mb-2">
           Data Agendada * (data futura)
@@ -95,7 +91,6 @@
         </p>
       </div>
 
-      <!-- Status -->
       <div>
         <label class="block text-sm font-medium text-gray-900 mb-2">
           Status
@@ -111,7 +106,6 @@
       </div>
     </div>
 
-    <!-- Botões -->
     <div class="flex gap-4 justify-end">
       <button
         type="button"

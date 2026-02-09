@@ -50,7 +50,6 @@ export class ListaColaboradoresComponent implements OnInit {
     
     if (confirm('Tem certeza que deseja deletar este colaborador?')) {
       try {
-        // Usar apenas o serviço - ele cuida de tudo (IndexedDB + Fila + Sincronização)
         await this.colaboradorService.deletarColaborador(id);
         this.listaAtualizada.emit();
       } catch (error) {

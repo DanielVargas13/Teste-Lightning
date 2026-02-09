@@ -10,30 +10,20 @@ import { Historico } from '../models/historico.model';
 })
 export class ApiService {
   private apiUrl = 'http://localhost:5157/api';
-  private readonly TIMEOUT_MS = 10000; // 10 segundos - timeout maior para respostas mais lentas em desenvolvimento
+  private readonly TIMEOUT_MS = 10000;
 
   constructor(private http: HttpClient) { }
 
-  /**
-   * Converte Observable para Promise com timeout
-   * Se não responder em 10s, falha rápido (não espera indefinidamente)
-   */
   private async toPromiseWithTimeout<T>(obs: Observable<T>): Promise<T | undefined> {
     return obs.pipe(
       timeout(this.TIMEOUT_MS)
     ).toPromise();
   }
 
-  /**
-   * Método público para fazer requisição com timeout
-   * Usado pelos serviços para falhar rapidamente quando offline
-   * Timeout: 10 segundos
-   */
   async getWithTimeout<T>(observable: Observable<T>): Promise<T | undefined> {
     return this.toPromiseWithTimeout(observable);
   }
 
-  // ========== COLABORADORES ==========
   criarColaborador(colaborador: Colaborador): Observable<Colaborador> {
     return this.http.post<Colaborador>(`${this.apiUrl}/colaborador`, colaborador);
   }
@@ -54,7 +44,6 @@ export class ApiService {
     return this.http.delete(`${this.apiUrl}/colaborador/${id}`);
   }
 
-  // ========== TAREFAS ==========
   criarTarefa(tarefa: Tarefa): Observable<Tarefa> {
     return this.http.post<Tarefa>(`${this.apiUrl}/tarefa`, tarefa);
   }
@@ -83,7 +72,6 @@ export class ApiService {
     return this.http.post<Tarefa>(`${this.apiUrl}/tarefa/${id}/executar`, {});
   }
 
-  // ========== HISTÓRICOS ==========
   listarTodosHistoricos(): Observable<Historico[]> {
     return this.http.get<Historico[]>(`${this.apiUrl}/historico`);
   }

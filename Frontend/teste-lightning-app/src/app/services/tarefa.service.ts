@@ -64,14 +64,11 @@ export class TarefaService {
   async executarTarefa(id: number | undefined): Promise<void> {
     if (!id) return;
     
-    // 1. Recuperar tarefa
     const tarefa = await this.indexedDBService.obterTarefa(id);
     if (!tarefa) return;
 
-    // 3. Salvar tarefa reprogramada
     await this.indexedDBService.salvarTarefa(tarefa);
 
-    // 5. Adicionar à fila de sincronização
     await this.indexedDBService.adicionarNaFila({
       entityType: 'Tarefa',
       entityId: id,
@@ -85,28 +82,25 @@ export class TarefaService {
 
   async carregarTarefas(): Promise<void> {
     try {
-      // Tentar carregar do backend primeiro com timeout rápido (5s)
       const tarefasBackend = await this.apiService.getWithTimeout(
         this.apiService.listarTarefas()
       );
       if (tarefasBackend && Array.isArray(tarefasBackend)) {
-        // Se conseguir do backend, atualizar IndexedDB
         for (const tarefa of tarefasBackend) {
           await this.indexedDBService.salvarTarefa(tarefa);
         }
         this.tarefas$.next(tarefasBackend);
-        console.log('✅ Tarefas carregadas do backend');
+        console.log('Tarefas carregadas do backend');
         return;
       }
     } catch (erro) {
-      console.warn('⚠️ Backend offline/lento. Carregando tarefas do armazenamento local...', erro);
+      console.warn('Backend offline/lento. Carregando tarefas do armazenamento local...', erro);
     }
     
-    // Fallback: carregar do IndexedDB (modo offline) - IMEDIATO
     const tarefasLocal = await this.indexedDBService.listarTarefas();
     this.tarefas$.next(tarefasLocal);
     if (tarefasLocal.length > 0) {
-      console.log(`📱 ${tarefasLocal.length} tarefas carregadas do armazenamento local (offline)`);
+      console.log(`${tarefasLocal.length} tarefas carregadas do armazenamento local (offline)`);
     }
   }
 

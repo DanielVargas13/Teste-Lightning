@@ -1,14 +1,12 @@
 <nav class="bg-blue-600 text-white shadow-lg">
   <div class="max-w-7xl mx-auto px-4">
     <div class="flex justify-between items-center h-16">
-      <!-- Logo -->
       <div class="flex-shrink-0">
         <a routerLink="/" class="text-2xl font-bold" (click)="closeMenu()">
-          ⚡ Lightning
+          ⚡ GDT
         </a>
       </div>
 
-      <!-- Desktop Navigation -->
       <div class="hidden md:flex space-x-8">
         <a
           routerLink="/"
@@ -41,7 +39,6 @@
         </a>
       </div>
 
-      <!-- Mobile menu button -->
       <div class="md:hidden">
         <button
           (click)="toggleMenu()"
@@ -64,7 +61,6 @@
       </div>
     </div>
 
-    <!-- Mobile Navigation -->
     <div
       *ngIf="menuOpen"
       class="md:hidden pb-4 space-y-2"
@@ -99,7 +95,6 @@
       </a>
     </div>
 
-    <!-- Status de Sincronização -->
     <div class="py-3 border-t border-blue-500">
       <app-status-sincronizacao></app-status-sincronizacao>
     </div>

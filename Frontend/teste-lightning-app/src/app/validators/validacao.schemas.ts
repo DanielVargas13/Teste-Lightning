@@ -1,9 +1,5 @@
 import { z } from 'zod';
 
-/**
- * Esquema de validação para Colaborador
- * Inclui validações de formato, comprimento e regras de negócio
- */
 export const ColaboradorSchema = z.object({
   id: z.number().optional(),
   nome: z
@@ -37,10 +33,6 @@ export const ColaboradorSchema = z.object({
   dataAtualizacao: z.date().optional()
 });
 
-/**
- * Esquema de validação para Tarefa
- * Inclui validações de formato, comprimento, datas futuras e regras de negócio
- */
 export const TarefaSchema = z.object({
   id: z.number().optional(),
   descricao: z
@@ -77,10 +69,6 @@ export const TarefaSchema = z.object({
   nomeColaborador: z.string().optional()
 });
 
-/**
- * Esquema para validações de campos individuais
- * Útil para validações em tempo real enquanto o usuário digita
- */
 export const ValidadorCampos = {
   nome: z
     .string()
@@ -124,6 +112,5 @@ export const ValidadorCampos = {
     .max(365, 'Periodicidade deve ser no máximo 365 dias')
 };
 
-// Tipos inferidos do Zod para uso em TypeScript
 export type ColaboradorValidacao = z.infer<typeof ColaboradorSchema>;
 export type TarefaValidacao = z.infer<typeof TarefaSchema>;

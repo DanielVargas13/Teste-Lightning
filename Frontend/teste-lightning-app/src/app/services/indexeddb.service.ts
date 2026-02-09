@@ -30,7 +30,6 @@ export const db = new AppDB();
 })
 export class IndexedDBService {
   
-  // ========== COLABORADORES ==========
   async salvarColaborador(colaborador: Colaborador): Promise<number> {
     return await db.colaboradores.put(colaborador);
   }
@@ -47,7 +46,6 @@ export class IndexedDBService {
     await db.colaboradores.delete(id);
   }
 
-  // ========== TAREFAS ==========
   async salvarTarefa(tarefa: Tarefa): Promise<number> {
     return await db.tarefas.put(tarefa);
   }
@@ -68,7 +66,6 @@ export class IndexedDBService {
     await db.tarefas.delete(id);
   }
 
-  // ========== HISTÓRICOS ==========
   async salvarHistorico(historico: Historico): Promise<number> {
     return await db.historicos.put(historico);
   }
@@ -85,7 +82,6 @@ export class IndexedDBService {
     return await db.historicos.toArray();
   }
 
-  // ========== FILA DE SINCRONIZAÇÃO ==========
   async adicionarNaFila(operacao: any): Promise<number> {
     return await db.sincronizacaoQueue.put(operacao);
   }
@@ -105,7 +101,6 @@ export class IndexedDBService {
     await db.sincronizacaoQueue.bulkDelete(idsParaDeletar);
   }
 
-  // ========== METADADOS DE SINCRONIZAÇÃO ==========
   async obterUltimaSincronizacao(tipo: string): Promise<Date | null> {
     const metadata = await db.sincronizacaoMetadata.get(tipo);
     return metadata?.ultimaSincronizacao ? new Date(metadata.ultimaSincronizacao) : null;

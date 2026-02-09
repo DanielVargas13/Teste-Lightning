@@ -19,28 +19,25 @@ export class HistoricoService {
 
   async carregarHistoricos(): Promise<void> {
     try {
-      // Tentar carregar do backend primeiro com timeout rápido (5s)
       const historicosBackend = await this.apiService.getWithTimeout(
         this.apiService.listarTodosHistoricos()
       );
       if (historicosBackend && Array.isArray(historicosBackend)) {
-        // Se conseguir do backend, atualizar IndexedDB
         for (const historico of historicosBackend) {
           await this.indexedDBService.salvarHistorico(historico);
         }
         this.historicos$.next(historicosBackend);
-        console.log('✅ Históricos carregados do backend');
+        console.log('Históricos carregados do backend');
         return;
       }
     } catch (erro) {
-      console.warn('⚠️ Backend offline/lento. Usando armazenamento local...', erro);
+      console.warn('Backend offline/lento. Usando armazenamento local...', erro);
     }
     
-    // Fallback: carregar do IndexedDB (modo offline) - IMEDIATO
     const historicosLocal = await this.indexedDBService.listarHistoricosDaTarefa(0);
     this.historicos$.next(historicosLocal);
     if (historicosLocal.length > 0) {
-      console.log(`📱 ${historicosLocal.length} históricos carregados do armazenamento local (offline)`);
+      console.log(`${historicosLocal.length} históricos carregados do armazenamento local (offline)`);
     }
   }
 
