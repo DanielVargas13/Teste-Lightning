@@ -19,10 +19,8 @@ public class ReprogramacaoTarefaService : IReprogramacaoTarefaService
         if (tarefa == null)
             throw new Exception("Tarefa não encontrada");
 
-        // Calcular próxima data
         var novaDataProxima = dataExecucao.AddDays(tarefa.PeriodicidadeDias);
 
-        // Atualizar tarefa
         tarefa.DataAgendada = novaDataProxima;
         tarefa.DataProxima = novaDataProxima;
         tarefa.DataAtualizacao = DateTime.UtcNow;

@@ -56,7 +56,6 @@ public class HistoricoService : IHistoricoService
 
     public async Task<List<HistoricoDTO>> ListarHistoricosDoColaboradorAsync(int colaboradorId)
     {
-        // Filtrar históricos onde a tarefa pertence ao colaborador
         return await _context.Historicos
             .Include(h => h.Tarefa)
             .ThenInclude(t => t.Colaborador)

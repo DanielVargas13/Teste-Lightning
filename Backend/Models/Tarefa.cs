@@ -11,8 +11,6 @@ public class Tarefa
     public bool Ativo { get; set; } = true;
     public DateTime DataCriacao { get; set; } = DateTime.UtcNow;
     public DateTime DataAtualizacao { get; set; } = DateTime.UtcNow;
-    
-    // Relacionamentos
     public Colaborador? Colaborador { get; set; }
     public ICollection<Historico> Historicos { get; set; } = new List<Historico>();
 }

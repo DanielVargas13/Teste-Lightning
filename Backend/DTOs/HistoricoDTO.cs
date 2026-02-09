@@ -4,7 +4,6 @@ public class HistoricoDTO
 {
     public int Id { get; set; }
     public int TarefaId { get; set; }
-    // ColaboradorId mantido aqui para UI, mas será preenchido via join (Tarefa.Colaborador)
     public int ColaboradorId { get; set; }
     public string? DescricaoTarefa { get; set; }
     public string? NomeColaborador { get; set; }

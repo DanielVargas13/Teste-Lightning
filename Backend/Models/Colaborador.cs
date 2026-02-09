@@ -10,8 +10,5 @@ public class Colaborador
     public DateTime DataCriacao { get; set; } = DateTime.UtcNow;
     public DateTime DataAtualizacao { get; set; } = DateTime.UtcNow;
     public bool Ativo { get; set; } = true;
-    
-    // Relacionamentos
     public ICollection<Tarefa> Tarefas { get; set; } = new List<Tarefa>();
-    // Nota: Históricos removido - acesse via Tarefas para evitar ciclo
 }

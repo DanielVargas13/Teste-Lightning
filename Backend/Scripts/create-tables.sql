@@ -1,14 +1,6 @@
--- Script SQL para criar o banco TesteLightningDB e todas as tabelas
--- Execute este arquivo em: SQL Server Management Studio ou sqlcmd
--- 
--- Uso:
---   sqlcmd -S . -U sa -P YourPassword < create-tables.sql
---   sqlcmd -S . -E < create-tables.sql   (Windows Auth)
-
 USE master;
 GO
 
--- Criar banco de dados (se não existir)
 IF NOT EXISTS (SELECT * FROM sys.databases WHERE name = 'TesteLightningDB')
 BEGIN
     CREATE DATABASE TesteLightningDB;
@@ -18,9 +10,6 @@ GO
 USE TesteLightningDB;
 GO
 
--- ============================================================================
--- Tabela: Colaborador
--- ============================================================================
 IF NOT EXISTS (SELECT * FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_NAME = 'Colaborador')
 BEGIN
     CREATE TABLE [dbo].[Colaborador] (
@@ -43,9 +32,6 @@ BEGIN
 END
 GO
 
--- ============================================================================
--- Tabela: Tarefa
--- ============================================================================
 IF NOT EXISTS (SELECT * FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_NAME = 'Tarefa')
 BEGIN
     CREATE TABLE [dbo].[Tarefa] (
@@ -72,9 +58,6 @@ BEGIN
 END
 GO
 
--- ============================================================================
--- Tabela: Historico
--- ============================================================================
 IF NOT EXISTS (SELECT * FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_NAME = 'Historico')
 BEGIN
     CREATE TABLE [dbo].[Historico] (
@@ -97,9 +80,6 @@ BEGIN
 END
 GO
 
--- ============================================================================
--- Verificação Final
--- ============================================================================
 PRINT '';
 PRINT '========================================';
 PRINT 'Tabelas criadas com sucesso!';

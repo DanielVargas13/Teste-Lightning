@@ -142,7 +142,6 @@ public class TarefaService : ITarefaService
         if (tarefa == null)
             throw new Exception("Tarefa não encontrada");
 
-        // Registrar no histórico
         var historico = new Historico
         {
             TarefaId = tarefaId,
@@ -153,7 +152,6 @@ public class TarefaService : ITarefaService
 
         _context.Historicos.Add(historico);
 
-        // Reprogramar tarefa
         await _reprogramacaoService.ReprogramarTarefaAsync(tarefaId, DateTime.UtcNow);
 
         await _context.SaveChangesAsync();

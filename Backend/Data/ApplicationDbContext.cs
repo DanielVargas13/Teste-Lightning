@@ -17,7 +17,6 @@ public class ApplicationDbContext : DbContext
     {
         base.OnModelCreating(modelBuilder);
 
-        // Configurar Colaborador
         modelBuilder.Entity<Colaborador>()
             .HasKey(c => c.Id);
 
@@ -41,7 +40,6 @@ public class ApplicationDbContext : DbContext
             .IsRequired()
             .HasMaxLength(500);
 
-        // Configurar Tarefa
         modelBuilder.Entity<Tarefa>()
             .HasKey(t => t.Id);
 
@@ -56,7 +54,6 @@ public class ApplicationDbContext : DbContext
             .HasForeignKey(t => t.ColaboradorId)
             .OnDelete(DeleteBehavior.Cascade);
 
-        // Índices para Tarefa
         modelBuilder.Entity<Tarefa>()
             .HasIndex(t => t.ColaboradorId)
             .HasDatabaseName("IX_Tarefas_ColaboradorId");
@@ -65,19 +62,15 @@ public class ApplicationDbContext : DbContext
             .HasIndex(t => t.DataProxima)
             .HasDatabaseName("IX_Tarefas_DataProxima");
 
-        // Configurar Historico
         modelBuilder.Entity<Historico>()
             .HasKey(h => h.Id);
 
-        // Somente FK para Tarefa (remove FK redundante para Colaborador)
-        // Histórico acessa Colaborador via Tarefa → Colaborador
         modelBuilder.Entity<Historico>()
             .HasOne(h => h.Tarefa)
             .WithMany(t => t.Historicos)
             .HasForeignKey(h => h.TarefaId)
             .OnDelete(DeleteBehavior.Cascade);
 
-        // Índices para Historico
         modelBuilder.Entity<Historico>()
             .HasIndex(h => h.TarefaId)
             .HasDatabaseName("IX_Historicos_TarefaId");
