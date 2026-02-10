@@ -8,13 +8,14 @@ import { Colaborador } from '../../../models/colaborador.model';
 import { TarefaSchema, ValidadorCampos } from '../../../validators/validacao.schemas';
 import { ZodError } from 'zod';
 import { Observable } from 'rxjs';
+import { SincronizacaoService } from '../../../services/sincronizacao.service';
 
 @Component({
   selector: 'app-formulario-tarefa',
   standalone: true,
   imports: [CommonModule, FormsModule],
   templateUrl: './formulario-tarefa.component.html',
-  styleUrls: ['./formulario-tarefa.component.css']
+  styleUrls: ['./formulario-tarefa.component.css'],
 })
 export class FormularioTarefaComponent implements OnInit {
   @Input() tarefa: Tarefa | null = null;
@@ -26,7 +27,7 @@ export class FormularioTarefaComponent implements OnInit {
     colaboradorId: 0,
     periodicidadeDias: 1,
     dataAgendada: new Date(),
-    ativo: true
+    ativo: true,
   };
 
   colaboradores$: Observable<Colaborador[]>;
@@ -34,19 +35,21 @@ export class FormularioTarefaComponent implements OnInit {
   erro = '';
   errosCampos: { [key: string]: string } = {};
   modo: 'criar' | 'editar' = 'criar';
+  sincronizando$: Observable<boolean>;
 
   constructor(
     private tarefaService: TarefaService,
-    private colaboradorService: ColaboradorService
+    private colaboradorService: ColaboradorService,
+    private sincronizacaoService: SincronizacaoService,
   ) {
     this.colaboradores$ = this.colaboradorService.getColaboradores$();
+    this.sincronizando$ = this.sincronizacaoService.getSincronizando$();
   }
 
   ngOnInit() {
     if (this.tarefa) {
       this.modo = 'editar';
       this.formulario = { ...this.tarefa };
-      // Formatar a data para o input
       if (this.formulario.dataAgendada) {
         const d = new Date(this.formulario.dataAgendada);
         this.formulario.dataAgendada = new Date(d.getFullYear(), d.getMonth(), d.getDate());
@@ -55,15 +58,12 @@ export class FormularioTarefaComponent implements OnInit {
   }
 
   async salvarTarefa() {
-    // Limpar erros anteriores
     this.erro = '';
     this.errosCampos = {};
 
-    // Validar formulário completo com Zod
     const resultado = TarefaSchema.safeParse(this.formulario);
-    
+
     if (!resultado.success) {
-      // Processar erros do Zod
       resultado.error.issues.forEach((err: any) => {
         const campo = err.path[0] as string;
         this.errosCampos[campo] = err.message;
@@ -78,9 +78,11 @@ export class FormularioTarefaComponent implements OnInit {
       if (this.modo === 'criar') {
         await this.tarefaService.criarTarefa(resultado.data);
         this.salvo.emit();
+        this.sincronizacaoService.sincronizarAgora();
       } else {
         await this.tarefaService.atualizarTarefa(resultado.data);
         this.salvo.emit();
+        this.sincronizacaoService.sincronizarAgora();
       }
     } catch (error) {
       this.erro = 'Erro ao salvar tarefa';
@@ -90,10 +92,6 @@ export class FormularioTarefaComponent implements OnInit {
     }
   }
 
-  /**
-   * Valida um campo específico em tempo real
-   * Usado para feedback imediato enquanto o usuário digita
-   */
   validarCampo(campo: string): void {
     this.errosCampos[campo] = '';
     const valor = (this.formulario as any)[campo];
@@ -114,23 +112,14 @@ export class FormularioTarefaComponent implements OnInit {
     }
   }
 
-  /**
-   * Valida campo descrição em tempo real
-   */
   validarDescricao(): void {
     this.validarCampo('descricao');
   }
 
-  /**
-   * Valida campo periodicidade em tempo real
-   */
   validarPeriodicidade(): void {
     this.validarCampo('periodicidadeDias');
   }
 
-  /**
-   * Valida campo colaborador (não vazio)
-   */
   validarColaborador(): void {
     this.errosCampos['colaboradorId'] = '';
     if (!this.formulario.colaboradorId || this.formulario.colaboradorId === 0) {
@@ -138,9 +127,6 @@ export class FormularioTarefaComponent implements OnInit {
     }
   }
 
-  /**
-   * Valida data agendada
-   */
   validarDataAgendada(): void {
     this.errosCampos['dataAgendada'] = '';
     if (!this.formulario.dataAgendada) {

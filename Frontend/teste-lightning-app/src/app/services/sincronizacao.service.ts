@@ -199,7 +199,7 @@ export class SincronizacaoService {
         console.log(`Sincronização de tarefas: ${atualizacoes} alteração(ões)`);
         await this.tarefaService.carregarTarefas();
       } else {
-        console.log(`ℹTarefas já sincronizadas (sem alterações)`);
+        console.log(`Tarefas já sincronizadas (sem alterações)`);
       }
     } catch (erro) {
       console.warn('Backend offline ou erro ao sincronizar tarefas. Utilizando dados locais:', erro);

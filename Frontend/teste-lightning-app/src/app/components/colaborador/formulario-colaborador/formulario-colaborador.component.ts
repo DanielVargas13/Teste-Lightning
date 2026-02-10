@@ -5,13 +5,15 @@ import { ColaboradorService } from '../../../services/colaborador.service';
 import { Colaborador } from '../../../models/colaborador.model';
 import { ColaboradorSchema, ValidadorCampos } from '../../../validators/validacao.schemas';
 import { ZodError } from 'zod';
+import { SincronizacaoService } from '../../../services/sincronizacao.service';
+import { Observable } from 'rxjs';
 
 @Component({
   selector: 'app-formulario-colaborador',
   standalone: true,
   imports: [CommonModule, FormsModule],
   templateUrl: './formulario-colaborador.component.html',
-  styleUrls: ['./formulario-colaborador.component.css']
+  styleUrls: ['./formulario-colaborador.component.css'],
 })
 export class FormularioColaboradorComponent implements OnInit {
   @Input() colaborador: Colaborador | null = null;
@@ -23,17 +25,21 @@ export class FormularioColaboradorComponent implements OnInit {
     sobrenome: '',
     celular: '',
     endereco: '',
-    ativo: true
+    ativo: true,
   };
 
   carregando = false;
   erro = '';
   errosCampos: { [key: string]: string } = {};
   modo: 'criar' | 'editar' = 'criar';
+  sincronizando$: Observable<boolean>;
 
   constructor(
-    private colaboradorService: ColaboradorService
-  ) {}
+    private colaboradorService: ColaboradorService,
+    private sincronizacaoService: SincronizacaoService,
+  ) {
+    this.sincronizando$ = this.sincronizacaoService.getSincronizando$();
+  }
 
   ngOnInit() {
     if (this.colaborador) {
@@ -47,7 +53,7 @@ export class FormularioColaboradorComponent implements OnInit {
     this.errosCampos = {};
 
     const resultado = ColaboradorSchema.safeParse(this.formulario);
-    
+
     if (!resultado.success) {
       resultado.error.issues.forEach((err: any) => {
         const campo = err.path[0] as string;
@@ -63,9 +69,11 @@ export class FormularioColaboradorComponent implements OnInit {
       if (this.modo === 'criar') {
         await this.colaboradorService.criarColaborador(resultado.data);
         this.salvo.emit();
+        this.sincronizacaoService.sincronizarAgora();
       } else {
         await this.colaboradorService.atualizarColaborador(resultado.data);
         this.salvo.emit();
+        this.sincronizacaoService.sincronizarAgora();
       }
     } catch (error) {
       this.erro = 'Erro ao salvar colaborador';

@@ -29,8 +29,8 @@ export const ColaboradorSchema = z.object({
     .min(10, 'Endereço deve ter no mínimo 10 caracteres')
     .max(200, 'Endereço deve ter no máximo 200 caracteres'),
   ativo: z.boolean().optional().default(true),
-  dataCriacao: z.date().optional(),
-  dataAtualizacao: z.date().optional()
+  dataCriacao: z.coerce.date().optional(),
+  dataAtualizacao: z.coerce.date().optional()
 });
 
 export const TarefaSchema = z.object({
@@ -57,15 +57,18 @@ export const TarefaSchema = z.object({
     .refine(
       (data) => {
         const hoje = new Date();
+        const dataCampo = new Date(data.getFullYear(), data.getMonth(), data.getDate());
+        dataCampo.setHours(0, 0, 0, 0);
         hoje.setDate(hoje.getDate() - 1);
-        return data >= hoje;
+        hoje.setHours(0, 0, 0, 0);
+        return dataCampo >= hoje;
       },
       'Data agendada não pode ser no passado'
     ),
-  dataProxima: z.date().optional(),
+  dataProxima: z.coerce.date().optional(),
   ativo: z.boolean().optional().default(true),
-  dataCriacao: z.date().optional(),
-  dataAtualizacao: z.date().optional(),
+  dataCriacao: z.coerce.date().optional(),
+  dataAtualizacao: z.coerce.date().optional(),
   nomeColaborador: z.string().optional()
 });
 

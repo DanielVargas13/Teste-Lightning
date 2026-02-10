@@ -30,6 +30,7 @@ export class ListaTarefasComponent implements OnInit {
   }
 
   ngOnInit() {
+    this.sincronizacaoService.sincronizarAgora();
     this.carregarTarefas();
   }
 
@@ -50,9 +51,9 @@ export class ListaTarefasComponent implements OnInit {
     
     if (confirm('Tem certeza que deseja deletar esta tarefa?')) {
       try {
-        // Usar apenas o serviço - ele cuida de tudo (IndexedDB + Fila + Sincronização)
         await this.tarefaService.deletarTarefa(id);
         this.listaAtualizada.emit();
+        this.sincronizacaoService.sincronizarAgora();
       } catch (error) {
         this.erro = 'Erro ao deletar tarefa';
         console.error(error);
@@ -64,9 +65,9 @@ export class ListaTarefasComponent implements OnInit {
     if (!id) return;
     
     try {
-      // Usar apenas o serviço - ele cuida de tudo (IndexedDB + Fila + Sincronização)
       await this.tarefaService.executarTarefa(id);
       this.listaAtualizada.emit();
+      this.sincronizacaoService.sincronizarAgora();
     } catch (error) {
       this.erro = 'Erro ao executar tarefa';
       console.error(error);

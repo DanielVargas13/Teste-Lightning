@@ -30,6 +30,7 @@ export class ListaColaboradoresComponent implements OnInit {
   }
 
   ngOnInit() {
+    this.sincronizacaoService.sincronizarAgora();
     this.carregarColaboradores();
   }
 
@@ -52,6 +53,7 @@ export class ListaColaboradoresComponent implements OnInit {
       try {
         await this.colaboradorService.deletarColaborador(id);
         this.listaAtualizada.emit();
+        this.sincronizacaoService.sincronizarAgora();
       } catch (error) {
         this.erro = 'Erro ao deletar colaborador';
         console.error(error);

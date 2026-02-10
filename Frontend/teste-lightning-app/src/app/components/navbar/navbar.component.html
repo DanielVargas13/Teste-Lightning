@@ -2,9 +2,7 @@
   <div class="max-w-7xl mx-auto px-4">
     <div class="flex justify-between items-center h-16">
       <div class="flex-shrink-0">
-        <a routerLink="/" class="text-2xl font-bold" (click)="closeMenu()">
-          ⚡ GDT
-        </a>
+        <a routerLink="/" class="text-2xl font-bold" (click)="closeMenu()"> ⚡ GDT </a>
       </div>
 
       <div class="hidden md:flex space-x-8">
@@ -40,16 +38,8 @@
       </div>
 
       <div class="md:hidden">
-        <button
-          (click)="toggleMenu()"
-          class="text-white focus:outline-none"
-        >
-          <svg
-            class="h-6 w-6"
-            fill="none"
-            stroke="currentColor"
-            viewBox="0 0 24 24"
-          >
+        <button (click)="toggleMenu()" class="text-white focus:outline-none">
+          <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path
               stroke-linecap="round"
               stroke-linejoin="round"
@@ -61,10 +51,7 @@
       </div>
     </div>
 
-    <div
-      *ngIf="menuOpen"
-      class="md:hidden pb-4 space-y-2"
-    >
+    <div *ngIf="menuOpen" class="md:hidden pb-4 space-y-2">
       <a
         routerLink="/"
         class="block px-3 py-2 rounded-md text-base font-medium hover:bg-blue-700 transition"
@@ -96,7 +83,16 @@
     </div>
 
     <div class="py-3 border-t border-blue-500">
-      <app-status-sincronizacao></app-status-sincronizacao>
+      <div class="bg-blue-50 border border-blue-200 rounded-lg p-4">
+        <div class="flex items-center justify-between">
+          <div class="flex items-center gap-3">
+            <div
+              *ngIf="sincronizando$ | async as sincronizando"
+              class="flex items-center gap-2"
+            ></div>
+          </div>
+        </div>
+      </div>
     </div>
   </div>
 </nav>
