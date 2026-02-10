@@ -23,7 +23,7 @@ http://localhost:4200
 - Angular 21 + Tailwind CSS + RxJS
 - .NET 8 + Entity Framework Core + SQL Server
 - Sincronização offline com IndexedDB
-- Polling automático (30 segundos)
+- Polling automático (10 segundos)
 - CRUD para Colaboradores, Tarefas, Histórico
 - Responsivo (Mobile/Desktop)
 
