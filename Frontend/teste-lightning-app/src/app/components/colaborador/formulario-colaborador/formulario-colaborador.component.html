@@ -1,0 +1,120 @@
+<div class="bg-white rounded-lg shadow p-6 mb-8">
+  <h2 class="text-2xl font-bold text-gray-900 mb-6">
+    {{ modo === 'criar' ? 'Novo' : 'Editar' }} Colaborador
+  </h2>
+
+  <div *ngIf="erro" class="p-4 bg-red-100 border border-red-400 text-red-700 rounded mb-6">
+    {{ erro }}
+  </div>
+
+  <form (ngSubmit)="salvarColaborador()" class="space-y-6">
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+      <div>
+        <label class="block text-sm font-medium text-gray-900 mb-2">
+          Nome *
+        </label>
+        <input
+          [(ngModel)]="formulario.nome"
+          (blur)="validarNome()"
+          (input)="validarNome()"
+          name="nome"
+          type="text"
+          [class.border-red-500]="errosCampos['nome']"
+          class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+          placeholder="Digite o nome"
+        />
+        <p *ngIf="errosCampos['nome']" class="mt-1 text-sm text-red-600">
+          {{ errosCampos['nome'] }}
+        </p>
+      </div>
+
+      <div>
+        <label class="block text-sm font-medium text-gray-900 mb-2">
+          Sobrenome *
+        </label>
+        <input
+          [(ngModel)]="formulario.sobrenome"
+          (blur)="validarSobrenome()"
+          (input)="validarSobrenome()"
+          name="sobrenome"
+          type="text"
+          [class.border-red-500]="errosCampos['sobrenome']"
+          class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+          placeholder="Digite o sobrenome"
+        />
+        <p *ngIf="errosCampos['sobrenome']" class="mt-1 text-sm text-red-600">
+          {{ errosCampos['sobrenome'] }}
+        </p>
+      </div>
+
+      <div>
+        <label class="block text-sm font-medium text-gray-900 mb-2">
+          Celular * (11 dígitos, ex: 11999999999)
+        </label>
+        <input
+          [(ngModel)]="formulario.celular"
+          (blur)="validarCelular()"
+          (input)="validarCelular()"
+          name="celular"
+          type="text"
+          [class.border-red-500]="errosCampos['celular']"
+          class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+          placeholder="Digite o celular"
+        />
+        <p *ngIf="errosCampos['celular']" class="mt-1 text-sm text-red-600">
+          {{ errosCampos['celular'] }}
+        </p>
+      </div>
+
+      <div>
+        <label class="block text-sm font-medium text-gray-900 mb-2">
+          Status
+        </label>
+        <select
+          [(ngModel)]="formulario.ativo"
+          name="ativo"
+          class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+        >
+          <option [value]="true">Ativo</option>
+          <option [value]="false">Inativo</option>
+        </select>
+      </div>
+    </div>
+
+    <div>
+      <label class="block text-sm font-medium text-gray-900 mb-2">
+        Endereço * (mínimo 10 caracteres)
+      </label>
+      <textarea
+        [(ngModel)]="formulario.endereco"
+        (blur)="validarEndereco()"
+        (input)="validarEndereco()"
+        name="endereco"
+        [class.border-red-500]="errosCampos['endereco']"
+        class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+        placeholder="Digite o endereço"
+        rows="3"
+      ></textarea>
+      <p *ngIf="errosCampos['endereco']" class="mt-1 text-sm text-red-600">
+        {{ errosCampos['endereco'] }}
+      </p>
+    </div>
+
+    <div class="flex gap-4 justify-end">
+      <button
+        type="button"
+        (click)="cancelar()"
+        class="px-6 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition"
+      >
+        Cancelar
+      </button>
+      <button
+        type="submit"
+        [disabled]="carregando"
+        class="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition disabled:opacity-50"
+      >
+        {{ carregando ? 'Salvando...' : 'Salvar' }}
+      </button>
+    </div>
+  </form>
+</div>

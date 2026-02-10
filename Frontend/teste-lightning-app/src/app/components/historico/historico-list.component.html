@@ -1,0 +1,30 @@
+<div class="container">
+  <h1>Histórico de Execuções</h1>
+  
+  <div *ngIf="erro" class="error-message">{{ erro }}</div>
+  
+  <div *ngIf="carregando" class="loading">Carregando...</div>
+  
+  <table class="table" *ngIf="!carregando && historicos.length > 0">
+    <thead>
+      <tr>
+        <th>Descrição da Tarefa</th>
+        <th>Colaborador</th>
+        <th>Data de Execução</th>
+        <th>Hora de Execução</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let historico of historicos">
+        <td>{{ historico.descricaoTarefa }}</td>
+        <td>{{ historico.nomeColaborador }}</td>
+        <td>{{ formatarData(historico.dataExecucao) }}</td>
+        <td>{{ formatarHora(historico.horaExecucao) }}</td>
+      </tr>
+    </tbody>
+  </table>
+  
+  <div *ngIf="!carregando && historicos.length === 0" class="empty-message">
+    Nenhum histórico encontrado.
+  </div>
+</div>
